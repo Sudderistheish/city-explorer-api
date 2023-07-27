@@ -29,20 +29,35 @@ const data = require("./data.weather.json");
 // define the port
 const port = process.env.PORT || 3002;
 
-class Person {
-  constructor(personObj) {
-    this.id = personObj.id;
-    this.name = personObj.name;
-    this.homeState = personObj.homeState;
-    if(personObj.favColor !== undefined) {
-      this.favColor = personObj.favColor;
+class Forecast {
+    constructor(date, description) {
+        this.date = date;
+        this.description = description;
+      }
     }
-  }
-}
+    
+    module.exports = Forecast;
 
-app.get('/', (request, response) => {
-  response.send('Hello Everyone!');
+
+    
+  
+
+
+app.get('weather', (request, resspons) => {
+    // Step 3: Extract data from the request query parameters
+    const { lat, lon, searchQuery } = req.query;
+//app.get('/', (request, response) => {
+ // response.send('Hello Everyone!');
 });
+
+let weatherData = {
+    latitude: parseFloat(lat),
+    longitude: parseFloat(lon),
+    searchQuery: searchQuery,
+    date:  // Replace with actual temperature date
+    description:  // Replace with actual weather description
+  };
+
 
 app.get('/search-by-home-state-tn', (request, response) => {
   let homeState = "Tennessee";
@@ -89,10 +104,10 @@ app.get('/find-by-id', (request, response, next) => {
 //});
 
 
-app.get('/andrea', (request, response) => {
-  let me = new Person(data[6]);
-  response.send(me);
-});
+//app.get('/andrea', (request, response) => {
+  //let me = new Person(data[6]);
+  //response.send(me);
+//});
 
 
 //app.get('/bianca', (request, response) => {
@@ -148,4 +163,4 @@ app.use((error, request, response, next) => {
 // start the web app on port 3000
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+});
