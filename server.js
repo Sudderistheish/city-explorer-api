@@ -30,37 +30,50 @@ const data = require("./data.weather.json");
 const port = process.env.PORT || 3002;
 
 class Forecast {
-    constructor(date, description) {
+    constructor(date, description, city, lon, lat) {
         this.date = date;
         this.description = description;
+        this.city_name = city_name;
+        this.lon= lon;
+        this.lat = lat;
       }
     }
     
-    module.exports = Forecast;
+    result = Forecast;
+
+  
+  
+    app.get('/', (request, response) => {
+      response.send('Hello Everyone!');
+    });
 
 
-    
+
+app.get("/weather", (request, resspons) => {
+    // Step 3: Extract data from the request query parameters
+    const { lat, lon, searchQuery } = request.query;
+    const city =  weatherData.find((city) => {
+      return(
+      city.lat === lat || city.lon === lon || data.city_name === searchQuery
+      );
+
+
+});
+
+if (city)  { 
+  const {lat, lon, city_name} = data.city;
+   response.send(( lat, lon, city_name));
+} else {
+  response.status(404).send( 'City not found');
+}
+
+
+});
   
 
 
-app.get('weather', (request, resspons) => {
-    // Step 3: Extract data from the request query parameters
-    const { lat, lon, searchQuery } = req.query;
-//app.get('/', (request, response) => {
- // response.send('Hello Everyone!');
-});
-
-let weatherData = {
-    latitude: parseFloat(lat),
-    longitude: parseFloat(lon),
-    searchQuery: searchQuery,
-    date:  // Replace with actual temperature date
-    description:  // Replace with actual weather description
-  };
-
-
-app.get('/search-by-home-state-tn', (request, response) => {
-  let homeState = "Tennessee";
+//app.get('/search-by-home-state-tn', (request, response) => {
+ // let homeState = "Tennessee";
   // {
   //    id: ...
   //    name: ...
@@ -68,8 +81,8 @@ app.get('/search-by-home-state-tn', (request, response) => {
   // }
   //let peopleOfState = data.filter((p) => p.homeState === "Tennessee" )
 
-  response.send(peopleOfState);
-})
+ // response.send(peopleOfState);
+//})
 //
 //app.get('/search-by-home-state', (request, response) => {
   // get homeState query
@@ -81,26 +94,26 @@ app.get('/search-by-home-state-tn', (request, response) => {
 
  // response.send(peopleOfState);
 //})
-//
-app.get('/find-by-id', (request, response, next) => {
+
+//app.get('/find-by-id', (request, response, next) => {
   // get id from query
   // ?id=123
-  console.log(request.query);
-  let id = request.query.id;
-  if(!id) {
+//  console.log(request.query);
+  //let id = request.query.id;
+ // if(!id) {
     // return response.status(500).send({error: "please include an id"})
-    return next(new Error("Id required in query!!!"));
-  }
-  let person = data.find((p) => p.id === id )
-  response.status(200).send(new Person(person));
-})
+   // return next(new Error("Id required in query!!!"));
+  //}
+ // let person = data.find((p) => p.id === id )
+//  response.status(200).send(new Person(person));
+//});
 
 
 
 
 //app.get('/robert', (request, response) => {
-  let me = new Person(data[0]);
-  response.send(me);
+//  let me = new Person(data[0]);
+//  response.send(me);
 //});
 
 
@@ -150,17 +163,17 @@ app.get('/find-by-id', (request, response, next) => {
 
 // catch all for not found
 // this will be a 404.
-app.get('*', (request, response) => {
-  response.status(404).send("Not found!!!");
-});
+//app.get('*', (request, response) => {
+  //response.status(404).send("Not found!!!");
+//});
 
 
-app.use((error, request, response, next) => {
-  response.status(500).send({error: error.message});
-});
+//app.use((error, request, response, next) => {
+  //response.status(500).send({error: error.message});
+//});
 
 
 // start the web app on port 3000
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(3000, () => {
+  console.log("Listening on port 3000");
 });
