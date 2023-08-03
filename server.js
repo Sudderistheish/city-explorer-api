@@ -9,8 +9,8 @@ Thank you!
 
 */
 
-import React from "react";
-import express from "express";
+//import React from "react";
+//import express from "express";
 
 // import express
 const express = require("express");
@@ -23,39 +23,35 @@ const app = express();
 require("dotenv").config();
 
 // import data
-const data = require("./data.weather.json");
+const data = require("./data/weather.json");
 
 // define the port
 const port = process.env.PORT || 3002;
 
 class Forecast {
-  constructor(date, description, city, lon, lat) {
+  constructor(date, description) {
     this.date = date;
     this.description = description;
-    this.city_name = city_name;
-    this.lon = lon;
-    this.lat = lat;
   }
 }
-
-result = Forecast;
 
 app.get("/", (request, response) => {
   response.send("Hello Everyone!");
 });
 
-app.get("/weather", (request, resspons) => {
+app.get("/weather", (request, response) => {
   // Step 3: Extract data from the request query parameters
   const { lat, lon, searchQuery } = request.query;
-  const city = weatherData.find((city) => {
-    return (
-      city.lat === lat || city.lon === lon || data.city_name === searchQuery
-    );
-  });
 
+  const city = data.find((city) => {
+    return city.lat == lat && city.lon == lon && city.city_name === searchQuery;
+  });
+  // localhost:3000/weather?searchQuery=Seattle&lat=47.60621&lon=-122.33207
   if (city) {
-    const { lat, lon, city_name } = data.city;
-    response.send((lat, lon, city_name));
+    const weatherData = city.data.map(
+      (element) => new Forecast(element.valid_date, element.weather.description)
+    );
+    response.send(weatherData);
   } else {
     response.status(404).send("City not found");
   }
