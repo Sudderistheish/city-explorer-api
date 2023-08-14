@@ -13,6 +13,7 @@ Thank you!
 //import express from "express";
 
 // import express
+const { default: axios } = require("axios");
 const express = require("express");
 
 // create our webserver app
@@ -23,10 +24,11 @@ const app = express();
 require("dotenv").config();
 
 // import data
-const data = require("./data/weather.json");
+//const data = require("./data/weather.json");
 
 // define the port
 const port = process.env.PORT || 3002;
+const weatherApi = process.env.WEATHERBIT_KEY;
 
 class Forecast {
   constructor(date, description) {
@@ -39,22 +41,16 @@ app.get("/", (request, response) => {
   response.send("Hello Everyone!");
 });
 
-app.get("/weather", (request, response) => {
+app.get("/weather", async (request, response) => {
   // Step 3: Extract data from the request query parameters
-  const { lat, lon, searchQuery } = request.query;
+  const { lat, lon } = request.query;
+  const weatherData = await axios.get(
+    `https://api.weatherbit.io/v2.0/forecast/daily?key=${weatherApi}&days=7&lat=${lat}&lon=${lon}`
+  );
+  console.log(weatherData.data);
+  // http://localhost:3002/weather?lat=47.60621&lon=-122.33207
 
-  const city = data.find((city) => {
-    return city.lat == lat && city.lon == lon && city.city_name === searchQuery;
-  });
-  // localhost:3000/weather?searchQuery=Seattle&lat=47.60621&lon=-122.33207
-  if (city) {
-    const weatherData = city.data.map(
-      (element) => new Forecast(element.valid_date, element.weather.description)
-    );
-    response.send(weatherData);
-  } else {
-    response.status(404).send("City not found");
-  }
+  response.send(weatherData.data);
 });
 
 //app.get('/search-by-home-state-tn', (request, response) => {
@@ -147,6 +143,6 @@ app.get("/weather", (request, response) => {
 //});
 
 // start the web app on port 3000
-app.listen(3000, () => {
-  console.log("Listening on port 3000");
+app.listen(port, () => {
+  console.log("Listening on port " + port);
 });
