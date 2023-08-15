@@ -27,6 +27,7 @@ require("dotenv").config();
 //const data = require("./data/weather.json");
 
 // define the port
+const cors = require("cors");
 const port = process.env.PORT || 3002;
 const weatherApi = process.env.WEATHERBIT_KEY;
 
@@ -36,113 +37,27 @@ class Forecast {
     this.description = description;
   }
 }
-
+app.use(cors());
 app.get("/", (request, response) => {
   response.send("Hello Everyone!");
 });
 
 app.get("/weather", async (request, response) => {
-  // Step 3: Extract data from the request query parameters
-  const { lat, lon } = request.query;
-  const weatherData = await axios.get(
-    `https://api.weatherbit.io/v2.0/forecast/daily?key=${weatherApi}&days=7&lat=${lat}&lon=${lon}`
-  );
-  console.log(weatherData.data);
-  // http://localhost:3002/weather?lat=47.60621&lon=-122.33207
+  try {
+    const { lat, lon } = request.query;
+    const weatherData = await axios.get(
+      `https://api.weatherbit.io/v2.0/forecast/daily?key=${weatherApi}&days=7&lat=${lat}&lon=${lon}`
+    );
+    console.log(weatherData.data);
+    // http://localhost:3002/weather?lat=47.60621&lon=-122.33207
 
-  response.send(weatherData.data);
+    response.send(weatherData.data);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send(error);
+  }
 });
 
-//app.get('/search-by-home-state-tn', (request, response) => {
-// let homeState = "Tennessee";
-// {
-//    id: ...
-//    name: ...
-//    homeState: ...
-// }
-//let peopleOfState = data.filter((p) => p.homeState === "Tennessee" )
-
-// response.send(peopleOfState);
-//})
-//
-//app.get('/search-by-home-state', (request, response) => {
-// get homeState query
-// ?homeState=Mississippi
-// let homeState = request.query.homeState;
-// let peopleOfState = data
-//                      .filter(p => p.homeState === homeState )
-//                     .map(   p => new Person(p)             );
-
-// response.send(peopleOfState);
-//})
-
-//app.get('/find-by-id', (request, response, next) => {
-// get id from query
-// ?id=123
-//  console.log(request.query);
-//let id = request.query.id;
-// if(!id) {
-// return response.status(500).send({error: "please include an id"})
-// return next(new Error("Id required in query!!!"));
-//}
-// let person = data.find((p) => p.id === id )
-//  response.status(200).send(new Person(person));
-//});
-
-//app.get('/robert', (request, response) => {
-//  let me = new Person(data[0]);
-//  response.send(me);
-//});
-
-//app.get('/andrea', (request, response) => {
-//let me = new Person(data[6]);
-//response.send(me);
-//});
-
-//app.get('/bianca', (request, response) => {
-//let me = new Person(data[1]);
-//response.send(me);
-//})
-
-// path is /gerard
-// callback function is the handler for the path
-//app.get('/gerard', (request, response) => {
-//let me = new Person (data[7]);
-//response.send("Hey Gerard");
-//})
-
-//app.get('/justin', (request, response) => {
-//let me = new Person (data[7]);
-//response.send(me);
-//})
-
-//app.get('/mu', (request, response) => {
-//let me = new Person(data[3]);
-//response.send(me);
-//})
-
-//app.get('/anya', (request, response) => {
-//let me = new Person(data[7]);
-//response.send(me);
-//})
-
-//app.get('/justine', (request, response) => {
-//let me = data[2];
-//response.send(me);
-// response.send('Hello Justine');
-//});
-
-// catch all for not found
-// this will be a 404.
-//app.get('*', (request, response) => {
-//response.status(404).send("Not found!!!");
-//});
-
-//app.use((error, request, response, next) => {
-//response.status(500).send({error: error.message});
-//});
-
-// start the web app on port 3000
 app.listen(port, () => {
   console.log("Listening on port " + port);
 });
